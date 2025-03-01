@@ -3,6 +3,8 @@ from time import sleep
 
 import requests
 
+from Score import add_score
+
 
 def get_money_interval(difficulty):
     try:
@@ -24,7 +26,7 @@ def get_money_interval(difficulty):
 
     return interval_lower, interval_upper, total_value, random_number
 
-def get_guess_from_user(lower, upper, total, dollars):
+def get_guess_from_user(lower, upper, total, dollars,difficulty):
     print(f"How much is {dollars} USD in Israeli Shekels? (to the second decimal number):")
     while True:
         try:
@@ -34,6 +36,7 @@ def get_guess_from_user(lower, upper, total, dollars):
             print("Invalid input, please enter a number!")
     if lower <= user_guess <= upper:
         print(f"You WON! the total amount was {total} ILS")
+        add_score(difficulty)
         return True
     print(f"You lost! the total amount was {total} ILS")
     return False
@@ -51,7 +54,7 @@ def play(difficulty):
     print()
     if result:
         interval_lower, interval_upper, total_value, dollars = result
-        return get_guess_from_user(interval_lower, interval_upper, total_value, dollars)
+        return get_guess_from_user(interval_lower, interval_upper, total_value, dollars, difficulty)
     else:
         print("Game could not start due to error fetching exchange rate.")
     return False

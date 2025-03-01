@@ -26,7 +26,7 @@ def load_game():
     print()
 
     #difficulty choice loop
-    print("Pleas choose the game difficulty from 1 to 5:")
+    print("Please choose the game difficulty from 1 to 5:")
     user_difficulty_choice = 0
     while True:
         try:

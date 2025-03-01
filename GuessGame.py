@@ -1,7 +1,12 @@
 import random
 from time import sleep
 
+from Score import add_score
+
+
 def generate_number(difficulty):
+    if difficulty == 1:
+        return 1
     return random.choice(range(1,difficulty))
 
 
@@ -35,6 +40,7 @@ def play(difficulty):
     print()
     if compare_results(secret_number, user_number):
         print(f"You guessed right the secret number was: {secret_number}")
+        add_score(difficulty)
         return True
     print(f"You are wrong, the secret number was {secret_number}")
     return False

@@ -1,6 +1,7 @@
 from random import randint
 from time import sleep
 import sys
+from Score import add_score
 
 
 def generate_sequence(difficulty):
@@ -30,9 +31,10 @@ def get_list_from_user(difficulty):
                 print("Invalid input.")
     return user_list
 
-def is_list_equal(generated_list, user_list):
+def is_list_equal(generated_list, user_list, difficulty):
     if generated_list == user_list:
         print(f"You are right!!!, the list was {generated_list}")
+        add_score(difficulty)
         return True
     print(f"You are wrong, the list was {generated_list}")
     return False
@@ -45,11 +47,11 @@ def play(difficulty):
     print("The correct numbers in the correct order")
     print("are you ready?")
     sleep(0.5)
-    print("3...")
+    print("...3")
     sleep(1)
-    print("2...")
+    print("...2")
     sleep(1)
-    print("1...")
+    print("...1")
     sleep(1)
     print("Start!")
     generated_list = generate_sequence(difficulty)
@@ -67,4 +69,4 @@ def play(difficulty):
     user_list = get_list_from_user(difficulty)
 
 
-    return is_list_equal(generated_list, user_list)
+    return is_list_equal(generated_list, user_list, difficulty)
