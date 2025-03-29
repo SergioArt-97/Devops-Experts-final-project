@@ -1,0 +1,11 @@
+version: "3.8"
+
+services:
+  world_of_games:
+    build: .
+    ports:
+      - "8777:5000"
+    volumes:
+      - ./Scores.txt:/Scores.txt
+    environment:
+      - FLASK_APP=MainScores.py
