@@ -8,7 +8,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/SergioArt-97/Devops-Experts-final-project.git'  // Update with your actual repository
+                git 'https://github.com/SergioArt-97/Devops-Experts-final-project.git'  // Ensure this is the correct repo URL
             }
         }
 
@@ -21,12 +21,11 @@ pipeline {
         stage('Run') {
             steps {
                 sh '''
-  docker run -d -p 8777:5000 --name word_of_games -v $WORKSPACE/Scores.txt:/Scores.txt $IMAGE_NAME
-  while ! docker ps | grep -q word_of_games; do
-    sleep 1
-  done
-'''
-
+                    docker run -d -p 8777:5000 --name word_of_games -v $WORKSPACE/Scores.txt:/Scores.txt $IMAGE_NAME
+                    while ! docker ps | grep -q word_of_games; do
+                        sleep 1
+                    done
+                '''
             }
         }
 
@@ -34,8 +33,8 @@ pipeline {
             steps {
                 script {
                     def testResult = sh(script: 'python3 e2e.py', returnStatus: true, returnStdout: true).trim()
+                    echo "Test Output: $testResult"
                     if (testResult != 0) {
-                        echo "Test Output: $testResult"
                         error("Test failed during the 'Test' stage. Stopping pipeline.")
                     }
                 }
