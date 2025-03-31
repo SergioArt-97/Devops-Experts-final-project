@@ -9,14 +9,15 @@ pipeline {
     }
 
     stages {
-        // Checkout the repository
         stage('Checkout') {
             steps {
-                checkout scm
+                script {
+                    // Make sure SCM repository is checked out
+                    checkout scm
+                }
             }
         }
 
-        // Build the Docker image
         stage('Build') {
             steps {
                 script {
@@ -25,7 +26,6 @@ pipeline {
             }
         }
 
-        // Run the Docker container
         stage('Run') {
             steps {
                 script {
@@ -40,29 +40,19 @@ pipeline {
             }
         }
 
-        // Run tests using e2e.py
         stage('Test') {
             steps {
                 script {
-                    // Wait a few seconds to ensure the Flask app is running
-                    sleep(5)
-
-                    // Run Selenium end-to-end tests
+                    sleep(5)  // Wait a few seconds to ensure Flask app is up
                     sh "python e2e.py"
-
-                    // If the test fails, mark the pipeline as failed
                 }
             }
         }
 
-        // Finalize: Stop container and push to DockerHub
         stage('Finalize') {
             steps {
                 script {
-                    // Stop the running container
                     sh "docker stop ${CONTAINER_NAME}"
-
-                    // Push the image to DockerHub
                     docker.withRegistry('', 'dockerhub-auth') {
                         sh "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
                     }
@@ -74,7 +64,6 @@ pipeline {
     post {
         always {
             script {
-                // Clean up unused Docker resources
                 sh "docker system prune -f"
             }
         }
