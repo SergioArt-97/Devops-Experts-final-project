@@ -29,13 +29,19 @@ pipeline {
         stage('Run') {
             steps {
                 script {
-                    sh """
-                        docker pull serjart/world-of-games:latest  # Always pull the latest image
-                        docker run -d --rm --name flask-game-app \
-                        -p 8777:5000 \
-                        -v ${WORKSPACE}/Scores.txt:/app/Scores.txt \
-                        serjart/world-of-games:latest
-                    """
+                    try {
+                        sh """
+                            docker pull serjart/world-of-games:latest  # Always pull the latest image
+                            docker run -d --rm --name flask-game-app \
+                            -p 8777:5000 \
+                            -v ${WORKSPACE}/Scores.txt:/app/Scores.txt \
+                            serjart/world-of-games:latest
+                        """
+                    } catch (Exception e) {
+                        echo "Error during docker run: ${e}"
+                        currentBuild.result = 'FAILURE'
+                        throw e
+                    }
                 }
             }
         }
