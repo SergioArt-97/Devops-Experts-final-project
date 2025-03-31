@@ -1,7 +1,15 @@
 import os
+from Score import add_score
 
 from flask import Flask, render_template_string
 from Utils import SCORES_FILE_NAME
+
+def ensure_scores_file():
+    if not os.path.exists(SCORES_FILE_NAME):
+        with open(SCORES_FILE_NAME, "w") as score_file:
+            score_file.write("0")
+
+ensure_scores_file()
 
 app = Flask(__name__)
 
@@ -37,6 +45,12 @@ html_template = """
 </html>
 """
 
+@app.route('/add_score/<int:difficulty>', methods=['POST'])
+def add_score_route(difficulty):
+    add_score(difficulty)  # Update the score based on difficulty
+    return f"Score updated! New score added based on difficulty {difficulty}.", 200
+
+
 @app.route('/')
 def score_server():
     current_score = get_score()
@@ -46,4 +60,4 @@ def score_server():
     return render_template_string(html_template, score=current_score)
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host='0.0.0.0', port=5000)
