@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = "your-dockerhub-username/word-of-games"
+        DOCKER_IMAGE = "serjart/world-of-games"
         DOCKER_TAG = "latest"
         CONTAINER_NAME = "flask-game-app"
         SCORE_FILE_PATH = "/app/Scores.txt"
@@ -63,7 +63,7 @@ pipeline {
                     sh "docker stop ${CONTAINER_NAME}"
 
                     // Push the image to DockerHub
-                    docker.withRegistry('', 'dockerhub-credentials') {
+                    docker.withRegistry('', 'dockerhub-auth') {
                         sh "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
                     }
                 }
