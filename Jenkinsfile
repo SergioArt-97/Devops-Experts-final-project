@@ -49,7 +49,17 @@ pipeline {
         stage('Test') {
             steps {
                 script {
-                    sleep(5)  // Wait a few seconds to ensure Flask app is up
+                    sh '''
+                        echo "Waiting for Flask app to be ready..."
+                        for i in {1..10}; do
+                            if curl -s http://localhost:8777 >/dev/null; then
+                                echo "Flask app is up!"
+                                break
+                            fi
+                            echo "Waiting..."
+                            sleep 2
+                        done
+                    '''
                     sh "python e2e.py"
                 }
             }
