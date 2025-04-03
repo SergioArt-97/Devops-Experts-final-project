@@ -30,6 +30,13 @@ pipeline {
             steps {
                 script {
                     try {
+                        // Ensure any existing container is stopped and removed
+                        sh """
+                            docker stop ${CONTAINER_NAME} || true
+                            docker rm ${CONTAINER_NAME} || true
+                        """
+
+                        // Pull the latest image and run the new container
                         sh """
                             docker pull serjart/world-of-games:latest  # Always pull the latest image
                             docker run -d --rm --name flask-game-app \
