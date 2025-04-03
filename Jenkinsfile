@@ -85,7 +85,7 @@ pipeline {
                             sleep 2
                         done
                     '''
-                    sh "python e2e.py"
+                    sh "docker exec flask-game-app python /app/e2e.py"
                 }
             }
         }
