@@ -88,6 +88,7 @@ pipeline {
                     '''
                     // Run the e2e test inside the container and fail the pipeline on failure
                     def result = sh(script: "docker exec ${CONTAINER_NAME} python /app/e2e.py", returnStatus: true)
+                    echo "Test result: ${result}"  // Log the exit code for debugging
                     if (result != 0) {
                         error "Test failed with exit code ${result}"
                     }
