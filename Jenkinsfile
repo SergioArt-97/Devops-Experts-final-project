@@ -36,6 +36,13 @@ pipeline {
                             docker rm ${CONTAINER_NAME} || true
                         """
 
+                        // Ensure Scores.txt exists and is a file
+                        sh """
+                            if [ ! -f ${WORKSPACE}/Scores.txt ]; then
+                                echo 'Scores.txt file not found in workspace!' && exit 1
+                            fi
+                        """
+
                         // Pull the latest image and run the new container
                         sh """
                             docker pull serjart/world-of-games:latest  # Always pull the latest image
@@ -52,6 +59,7 @@ pipeline {
                 }
             }
         }
+
 
         stage('Test') {
             steps {
