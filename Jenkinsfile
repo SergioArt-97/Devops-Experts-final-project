@@ -26,6 +26,14 @@ pipeline {
             }
         }
 
+        stage('Debug') {
+                steps {
+                    script {
+                        sh 'ls -l /home/jenkins/workspace/WorldOfGamesPipeline/Scores.txt'
+                    }
+                }
+            }
+
         stage('Run') {
             steps {
                 script {
@@ -45,10 +53,12 @@ pipeline {
 
                         // Pull the latest image and run the new container
                         sh """
-                            docker pull serjart/world-of-games:latest  # Always pull the latest image
+                            docker stop flask-game-app || true  # Stop container if already running
+                            docker rm flask-game-app || true  # Remove existing container
+                            docker pull serjart/world-of-games:latest
                             docker run -d --rm --name flask-game-app \
                             -p 8777:5000 \
-                            -v ${WORKSPACE}/Scores.txt:/app/Scores.txt \
+                            -v ${WORKSPACE}/Scores.txt:/app/Scores.txt:ro \
                             serjart/world-of-games:latest
                         """
                     } catch (Exception e) {
