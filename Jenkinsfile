@@ -74,10 +74,11 @@ pipeline {
         stage('Test') {
             steps {
                 script {
+                    // Wait for Flask app to be ready
                     sh '''
                         echo "Waiting for Flask app to be ready..."
                         for i in {1..10}; do
-                            if curl -s http://localhost:8777 >/dev/null; then
+                            if docker exec ${CONTAINER_NAME} curl -s http://localhost:5000 >/dev/null; then
                                 echo "Flask app is up!"
                                 break
                             fi
@@ -85,7 +86,8 @@ pipeline {
                             sleep 2
                         done
                     '''
-                    sh "docker exec flask-game-app python /app/e2e.py"
+                    // Run the e2e test inside the container
+                    sh "docker exec ${CONTAINER_NAME} python /app/e2e.py"
                 }
             }
         }
