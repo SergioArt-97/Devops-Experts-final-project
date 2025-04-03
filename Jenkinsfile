@@ -2,101 +2,67 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = "serjart/world-of-games"
-        DOCKER_TAG = "latest"
-        CONTAINER_NAME = "flask-game-app"
-        SCORE_FILE_PATH = "/app/Scores.txt"
+        DOCKER_IMAGE = "serjart/world-of-games:latest"
     }
 
     stages {
         stage('Checkout') {
             steps {
-                script {
-                    // Make sure SCM repository is checked out
-                    checkout scm
-                }
+                checkout scm
             }
         }
 
         stage('Build') {
             steps {
                 script {
-                    sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
+                    sh '''
+                        echo "Building Docker image..."
+                        docker build -t ${DOCKER_IMAGE} .
+                    '''
                 }
             }
         }
 
-        stage('Debug') {
-                steps {
-                    script {
-                        sh 'ls -l /home/jenkins/workspace/WorldOfGamesPipeline/Scores.txt'
-                    }
-                }
-            }
-
-        stage('Run') {
+        stage('Run App') {
             steps {
                 script {
-                    try {
-                        // Ensure any existing container is stopped and removed
-                        sh """
-                            docker stop ${CONTAINER_NAME} || true
-                            docker rm ${CONTAINER_NAME} || true
-                        """
-
-                        // Ensure Scores.txt exists and is a file
-                        sh """
-                            if [ ! -f ${WORKSPACE}/Scores.txt ]; then
-                                echo 'Scores.txt file not found in workspace!' && exit 1
-                            fi
-                        """
-
-                        // Pull the latest image and run the new container
-                        sh """
-                            docker stop flask-game-app || true
-                            docker rm flask-game-app || true
-                            docker pull serjart/world-of-games:latest
-                            docker run -d --rm --name flask-game-app \
-                            -p 8777:5000 \
-                            -v ${WORKSPACE}/Scores.txt:/Scores.txt:ro \
-                            serjart/world-of-games:latest
-                        """
-                    } catch (Exception e) {
-                        echo "Error during docker run: ${e}"
-                        currentBuild.result = 'FAILURE'
-                        throw e
-                    }
+                    echo "Running Flask app in a container..."
+                    sh '''
+                        docker run -d -p 8777:8777 --name flask-game-app ${DOCKER_IMAGE}
+                    '''
                 }
             }
         }
-
 
         stage('Test') {
             steps {
                 script {
-                    sh '''
-                        echo "Waiting for Flask app to be ready..."
-                        for i in {1..10}; do
-                            if curl -s http://localhost:8777 >/dev/null; then
-                                echo "Flask app is up!"
-                                break
-                            fi
-                            echo "Waiting..."
-                            sleep 2
-                        done
-                    '''
+                    echo "Waiting for Flask app to be ready..."
+                    // Wait for Flask app to be ready
+                    for (i in 1..10) {
+                        if (sh(script: 'curl -s http://localhost:8777', returnStatus: true) == 0) {
+                            echo "Flask app is up!"
+                            break
+                        }
+                        echo "Waiting..."
+                        sleep 2
+                    }
+
+                    // Run the e2e tests
+                    echo "Running end-to-end tests..."
                     sh "docker exec flask-game-app python /app/e2e.py"
                 }
             }
         }
 
-        stage('Finalize') {
+        stage('Clean up') {
             steps {
                 script {
-                    sh "docker stop ${CONTAINER_NAME}"
-                    docker.withRegistry('', 'dockerhub-auth') {
-                        sh "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
-                    }
+                    echo "Stopping and removing Docker container..."
+                    sh '''
+                        docker stop flask-game-app
+                        docker rm flask-game-app
+                    '''
                 }
             }
         }
@@ -104,9 +70,7 @@ pipeline {
 
     post {
         always {
-            script {
-                sh "docker system prune -f"
-            }
+            cleanWs()
         }
     }
 }
