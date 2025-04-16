@@ -4,12 +4,26 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
-
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
 def test_scores_service(app_url):
     print("Running test against URL:", app_url)  # Log the test URL
-    service = Service(ChromeDriverManager().install())
-    driver = webdriver.Chrome(service=service)
+
+    options = Options()
+    options.add_argument("--headless")  # Run in headless mode for testing
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+
+    # Use the Selenium Grid URL to connect to the Chrome instance in the container
+    selenium_grid_url = "http://selenium:4444/wd/hub"  # this is the Selenium container's default hub URL
+
+    driver = webdriver.Remote(
+        command_executor=selenium_grid_url,
+        options=options,
+        keep_alive=True
+    )
+
     driver.get(app_url)
     try:
         score_element = driver.find_element(By.ID, "score")

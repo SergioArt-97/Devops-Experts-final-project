@@ -5,4 +5,5 @@ services:
     ports:
       - "5000:5000"
     volumes:
-      - ./Scores.txt:/Scores.txt  # This maps the local Scores.txt to the container
+      - ./Scores.txt:/Scores.txt
+      - .:/app
