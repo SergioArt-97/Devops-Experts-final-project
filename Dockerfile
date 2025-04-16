@@ -16,6 +16,10 @@ COPY requirements.txt /app/
 RUN pip install --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
+RUN pip list
+
+RUN ls /app
+
 # Copy the application code into the container
 COPY . /app
 
