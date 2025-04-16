@@ -54,6 +54,11 @@ pipeline {
                         done
                     '''
 
+                    sh '''
+                        . /home/jenkins/venv/bin/activate
+                        pip install -r /home/jenkins/workspace/WorldOfGamesPipeline/requirements.txt
+                    '''
+
                     def result = sh(script: '''
                         . /home/jenkins/venv/bin/activate
                         python3 e2e.py
