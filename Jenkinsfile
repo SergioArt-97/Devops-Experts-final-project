@@ -55,7 +55,7 @@ pipeline {
                     '''
 
                     def result = sh(script: '''
-                        source /home/jenkins/venv/bin/activate
+                        . /home/jenkins/venv/bin/activate
                         python3 e2e.py
                     ''', returnStatus: true)
 
