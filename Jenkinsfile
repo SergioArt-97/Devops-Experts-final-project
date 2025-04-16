@@ -56,7 +56,8 @@ pipeline {
                             docker stop flask-game-app || true
                             docker rm flask-game-app || true
                             docker pull serjart/world-of-games:latest
-                            docker run -d --rm --name flask-game-app \
+                            docker run -d --name flask-game-app \
+                            sh "docker logs ${CONTAINER_NAME}"
                             -p 8777:5000 \
                             -v ${WORKSPACE}/Scores.txt:/Scores.txt:ro \
                             serjart/world-of-games:latest
