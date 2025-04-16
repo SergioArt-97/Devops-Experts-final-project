@@ -15,7 +15,10 @@ def test_scores_service(app_url):
     # Use the Selenium Grid URL to connect to the Chrome instance in the container
     selenium_grid_url = "http://selenium:4444/wd/hub"  # this is the Selenium container's default hub URL
 
-    driver = webdriver.Remote(ChromeDriverManager().install(), options=options)
+    driver = webdriver.Remote(
+        command_executor='http://selenium:4444/wd/hub',
+        options=options
+    )
 
     driver.get(app_url)
     try:
