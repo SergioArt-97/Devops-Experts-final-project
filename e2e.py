@@ -28,6 +28,7 @@ def test_scores_service(app_url):
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
 
+
     selenium_url = 'http://selenium:4444/wd/hub'
     wait_for_selenium_server(selenium_url)
     driver = webdriver.Remote(command_executor=selenium_url, options=options)
