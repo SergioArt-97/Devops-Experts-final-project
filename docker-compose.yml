@@ -7,3 +7,4 @@ services:
     volumes:
       - ./Scores.txt:/Scores.txt
       - .:/app
+      - ./requirements.txt:requirements.txt

@@ -9,8 +9,9 @@ RUN apt-get update && apt-get install -y python3-pip
 # Copy the application code
 COPY . /app
 
-# # Install dependencies
-# RUN pip install --no-cache-dir -r requirements.txt
+# Install dependencies
+RUN pip install --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
 
 # Expose the app port
 EXPOSE 5000
