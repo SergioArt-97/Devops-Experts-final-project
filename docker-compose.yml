@@ -8,3 +8,10 @@ services:
       - ./Scores.txt:/Scores.txt
       - .:/app
       - ./requirements.txt:requirements.txt
+    depends_on:
+      - selenium
+
+  selenium:
+    image: selenium/standalone-chrome
+    ports:
+      - "4444:4444"

@@ -1,11 +1,8 @@
 import sys
-from time import sleep
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+from webdriver_manager.chrome import ChromeDriverManager
 
 def test_scores_service(app_url):
     print("Running test against URL:", app_url)  # Log the test URL
@@ -18,11 +15,7 @@ def test_scores_service(app_url):
     # Use the Selenium Grid URL to connect to the Chrome instance in the container
     selenium_grid_url = "http://selenium:4444/wd/hub"  # this is the Selenium container's default hub URL
 
-    driver = webdriver.Remote(
-        command_executor=selenium_grid_url,
-        options=options,
-        keep_alive=True
-    )
+    driver = webdriver.Remote(ChromeDriverManager().install(), options=options)
 
     driver.get(app_url)
     try:
