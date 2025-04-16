@@ -53,7 +53,7 @@ def test_scores_service(app_url):
 
 
 def main_function():
-    app_url = "http://127.0.0.1:5000/"
+    app_url = "http://flask-app:8777/"
     print("Starting the test...")  # Log start of test
 
     if test_scores_service(app_url):
