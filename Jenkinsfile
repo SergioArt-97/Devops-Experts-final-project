@@ -53,8 +53,12 @@ pipeline {
                             sleep 2
                         done
                     '''
-                    // Run the e2e test (assumes e2e.py is in root or app directory)
-                    def result = sh(script: "python3 e2e.py", returnStatus: true)
+
+                    def result = sh(script: '''
+                        source /home/jenkins/venv/bin/activate
+                        python3 e2e.py
+                    ''', returnStatus: true)
+
                     echo "Test result: ${result}"
                     if (result != 0) {
                         error "Test failed with exit code ${result}"
