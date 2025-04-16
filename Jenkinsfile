@@ -53,15 +53,18 @@ pipeline {
 
                         // Pull the latest image and run the new container
                         sh """
-                            docker stop flask-game-app || true
-                            docker rm flask-game-app || true
                             docker pull serjart/world-of-games:latest
-                            docker run -d --name flask-game-app \
-                            sh "docker logs ${CONTAINER_NAME}"
+                            docker run -d --name ${CONTAINER_NAME} \
                             -p 8777:5000 \
                             -v ${WORKSPACE}/Scores.txt:/Scores.txt:ro \
-                            serjart/world-of-games:latest
+                            ${DOCKER_IMAGE}:${DOCKER_TAG}
                         """
+                        // Optional: Wait for a few seconds to allow the container to initialize
+                        sh "sleep 5"
+
+                        // Capture and display the container logs
+                        sh "docker logs ${CONTAINER_NAME}"
+
                     } catch (Exception e) {
                         echo "Error during docker run: ${e}"
                         currentBuild.result = 'FAILURE'
