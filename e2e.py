@@ -3,6 +3,22 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
+import time
+import requests
+
+def wait_for_selenium_server(url, timeout=30):
+    start_time = time.time()
+    while True:
+        try:
+            response = requests.get(url)
+            if response.status_code == 200:
+                print("Selenium server is ready.")
+                break
+        except requests.exceptions.ConnectionError:
+            pass
+        if time.time() - start_time > timeout:
+            raise Exception("Timeout waiting for Selenium server.")
+        time.sleep(1)
 
 def test_scores_service(app_url):
     print("Running test against URL:", app_url)  # Log the test URL
@@ -12,13 +28,9 @@ def test_scores_service(app_url):
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
 
-    # Use the Selenium Grid URL to connect to the Chrome instance in the container
-    selenium_grid_url = "http://selenium:4444/wd/hub"  # this is the Selenium container's default hub URL
-
-    driver = webdriver.Remote(
-        command_executor='http://selenium:4444/wd/hub',
-        options=options
-    )
+    selenium_url = 'http://selenium:4444/wd/hub'
+    wait_for_selenium_server(selenium_url)
+    driver = webdriver.Remote(command_executor=selenium_url, options=options)
 
     driver.get(app_url)
     try:

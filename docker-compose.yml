@@ -10,13 +10,21 @@ services:
       - ./requirements.txt:requirements.txt
     depends_on:
       - selenium
+    networks:
+      - app-network
 
   selenium:
     image: selenium/standalone-chrome
     ports:
       - "4444:4444"
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:4444/wd/hub/status" ]
+      test: ["CMD", "curl", "-f", "http://localhost:4444/wd/hub/status"]
       interval: 30s
       timeout: 10s
       retries: 5
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

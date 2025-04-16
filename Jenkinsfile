@@ -76,29 +76,29 @@ pipeline {
 
 
         stage('Test') {
-            steps {
-                script {
-                    // Wait for Flask app to be ready
-                    sh '''
-                        echo "Waiting for Flask app to be ready..."
-                        for i in {1..10}; do
-                            if docker exec ${CONTAINER_NAME} curl -s http://localhost:5000 >/dev/null; then
-                                echo "Flask app is up!"
-                                break
-                            fi
-                            echo "Waiting..."
-                            sleep 2
-                        done
-                    '''
-                    // Run the e2e test inside the container and fail the pipeline on failure
-                    def result = sh(script: "docker exec ${CONTAINER_NAME} python /app/e2e.py", returnStatus: true)
-                    echo "Test result: ${result}"  // Log the exit code for debugging
-                    if (result != 0) {
+    steps {
+        script {
+            // Wait for Selenium to be ready
+            sh '''
+                echo "Waiting for Selenium to be ready..."
+                for i in {1..10}; do
+                    if docker exec ${CONTAINER_NAME} curl -s http://selenium:4444/wd/hub/status | grep -q '"ready":true'; then
+                        echo "Selenium is ready!"
+                        break
+                    fi
+                    echo "Waiting for Selenium..."
+                    sleep 2
+                done
+            '''
+            // Run the e2e test inside the container and fail the pipeline on failure
+            def result = sh(script: "docker exec ${CONTAINER_NAME} python /app/e2e.py", returnStatus: true)
+            echo "Test result: ${result}"  // Log the exit code for debugging
+            if (result != 0) {
                         error "Test failed with exit code ${result}"
+                        }
                     }
                 }
             }
-        }
 
         stage('Finalize') {
             steps {
