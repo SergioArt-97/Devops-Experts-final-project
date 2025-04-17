@@ -6,8 +6,6 @@ services:
       - "8777:5000"
     volumes:
       - ./Scores.txt:/Scores.txt
-      - ./requirements.txt:/app/requirements.txt
-      - ./MainScores.py:/app/MainScores.py
     command: ["python3", "/app/MainScores.py"]
     depends_on:
       - selenium
