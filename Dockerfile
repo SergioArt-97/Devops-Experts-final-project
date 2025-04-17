@@ -49,5 +49,7 @@ COPY . /app
 # Expose port
 EXPOSE 8777
 
+RUN ls -l /app
+
 # Run your Flask app
 CMD ["python3", "MainScores.py"]
