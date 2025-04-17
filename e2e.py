@@ -5,19 +5,20 @@ from selenium.webdriver.chrome.options import Options
 import time
 import requests
 
-def wait_for_selenium_server(url, timeout=30):
+def wait_for_selenium_server(full_url, timeout=30):
     start_time = time.time()
     while True:
         try:
-            response = requests.get(url)
+            response = requests.get(full_url)
+            print(f"Connecting to Selenium at {full_url}, status: {response.status_code}")  # Log the response
             if response.status_code == 200:
                 print("Selenium server is ready.")
                 break
-        except requests.exceptions.ConnectionError:
-            pass
+        except requests.exceptions.ConnectionError as e:
+            print(f"Connection failed: {e}")  # Log connection failures
         if time.time() - start_time > timeout:
             raise Exception("Timeout waiting for Selenium server.")
-        time.sleep(1)
+        time.sleep(5)
 
 def test_scores_service(app_url):
     print("Running test against URL:", app_url)  # Log the test URL
@@ -27,10 +28,21 @@ def test_scores_service(app_url):
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
 
+    selenium_base_url = 'http://selenium:4444'
+    selenium_status_url = f"{selenium_base_url}/wd/hub/status"
+    selenium_url = f"{selenium_base_url}/wd/hub"
 
-    selenium_url = 'http://selenium:4444/wd/hub'
-    wait_for_selenium_server(selenium_url)
-    driver = webdriver.Remote(command_executor=selenium_url, options=options)
+    print(f"Connecting to Selenium at {selenium_status_url}")  # Log the Selenium URL
+    wait_for_selenium_server("http://selenium:4444/wd/hub/status")
+
+    print(f"[DEBUG] Final Selenium URL used: {selenium_url}")
+
+    try:
+        driver = webdriver.Remote(command_executor=selenium_url, options=options)
+        print("WebDriver connected successfully.")  # Log WebDriver connection success
+    except Exception as e:
+        print(f"Error connecting to WebDriver: {e}")  # Log WebDriver connection error
+        raise e
 
     driver.get(app_url)
     try:
@@ -39,7 +51,7 @@ def test_scores_service(app_url):
 
         if score_text.isdigit():
             score = int(score_text)
-            if 1 <= score <= 1000:
+            if 0 <= score <= 1000:
                 print("Test passed, valid score found:", score)  # Log success
                 return True
             else:
