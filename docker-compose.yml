@@ -9,6 +9,7 @@ services:
       - .:/app
       - ./requirements.txt:/app/requirements.txt
       - ./MainScores.py:/app/MainScores.py
+    command: ["python3", "MainScores.py"]
     depends_on:
       - selenium
     networks:
