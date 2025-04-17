@@ -40,34 +40,12 @@ pipeline {
         }
 
         stage('Test') {
-            steps {
+             steps {
                 script {
-                    echo "Waiting for Selenium to be ready..."
-                    sh '''
-                        for i in {1..10}; do
-                            if curl -s http://localhost:4444/wd/hub/status | grep -q '"ready":true'; then
-                                echo "Selenium is ready!"
-                                break
-                            fi
-                            echo "Waiting for Selenium..."
-                            sleep 2
-                        done
-                    '''
+                    echo "Starting test container via Docker Compose..."
 
-                    sh '''
-                        . /home/jenkins/venv/bin/activate
-                        pip install -r /home/jenkins/workspace/WorldOfGamesPipeline/requirements.txt
-                    '''
-
-                    def result = sh(script: '''
-                        . /home/jenkins/venv/bin/activate
-                        python3 e2e.py
-                    ''', returnStatus: true)
-
-                    echo "Test result: ${result}"
-                    if (result != 0) {
-                        error "Test failed with exit code ${result}"
-                    }
+                    // Build and run only the 'test' service
+                    sh 'docker-compose up --build --abort-on-container-exit --exit-code-from test test'
                 }
             }
         }

@@ -25,10 +25,10 @@ services:
     networks:
       - app-network
 
-  tester:
+  test:
     build:
       context: .
-    command: sh -c "python3 e2e.py"
+    command: ["sh", "-c", "sleep 5 && python3 e2e.py"]
     depends_on:
       - flask-app
       - selenium
