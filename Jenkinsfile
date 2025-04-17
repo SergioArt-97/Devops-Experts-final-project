@@ -42,9 +42,9 @@ pipeline {
         stage('Test') {
              steps {
                 script {
-                    echo "Starting test container via Docker Compose..."
-
-                    // Build and run only the 'test' service
+                    echo "Waiting for Flask app to be ready..."
+                    sh 'until curl -s http://flask-app:5000; do echo "Waiting for Flask app to be ready..."; sleep 5; done'
+                    echo "Flask app is ready, starting tests."
                     sh 'docker-compose --verbose up --build --abort-on-container-exit --exit-code-from test test'
                 }
             }
