@@ -45,7 +45,7 @@ pipeline {
                     echo "Starting test container via Docker Compose..."
 
                     // Build and run only the 'test' service
-                    sh 'docker-compose up --build --abort-on-container-exit --exit-code-from test test'
+                    sh 'docker-compose --verbose up --build --abort-on-container-exit --exit-code-from test test'
                 }
             }
         }

@@ -5,6 +5,9 @@ from selenium.webdriver.chrome.options import Options
 import time
 import requests
 
+print("=== E2E TEST STARTED ===")
+
+
 def wait_for_selenium_server(full_url, timeout=30):
     start_time = time.time()
     while True:

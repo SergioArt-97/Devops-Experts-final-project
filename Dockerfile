@@ -43,8 +43,12 @@ COPY requirements.txt /app/
 RUN pip install --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
+RUN echo "Listing before e2e.py copy..." && ls -l /app
+
 # Copy app code
 COPY . /app
+
+RUN echo "Final contents of /app:" && ls -l /app
 
 # Expose port
 EXPOSE 8777
