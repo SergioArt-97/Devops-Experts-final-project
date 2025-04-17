@@ -27,9 +27,10 @@ def test_scores_service(app_url):
     print("Running test against URL:", app_url)  # Log the test URL
 
     options = Options()
-    options.add_argument("--headless")  # Run in headless mode for testing
+    options.add_argument("--headless=new")  # Run in headless mode for testing
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
+    options.add_argument("--disable-gpu")
 
     selenium_base_url = 'http://selenium:4444'
     selenium_status_url = f"{selenium_base_url}/wd/hub/status"
