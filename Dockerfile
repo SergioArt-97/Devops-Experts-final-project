@@ -52,4 +52,4 @@ EXPOSE 8777
 RUN ls -l /app
 
 # Run your Flask app
-CMD ["python3", "./MainScores.py"]
+CMD ["python3", "/app/MainScores.py"]
