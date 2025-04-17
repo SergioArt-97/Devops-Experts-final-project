@@ -42,6 +42,8 @@ def test_scores_service(app_url):
     print(f"[DEBUG] Final Selenium URL used: {selenium_url}")
 
     try:
+        print("Waiting 5 seconds to ensure Chrome is ready...")
+        time.sleep(5)
         driver = webdriver.Remote(command_executor=selenium_url, options=options)
         print("WebDriver connected successfully.")  # Log WebDriver connection success
     except Exception as e:
