@@ -8,7 +8,7 @@ services:
       - ./Scores.txt:/Scores.txt
       - .:/app
       - ./requirements.txt:/app/requirements.txt
-      - ./MainScore.py:/app/MainScore.py
+      - ./MainScores.py:/app/MainScores.py
     depends_on:
       - selenium
     networks:
