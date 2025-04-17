@@ -28,7 +28,7 @@ pipeline {
             steps {
                 script {
                     // Run the app and selenium containers in the background
-                    sh "docker-compose up -d --build"
+                    sh "docker-compose up -d --build flask-app selenium"
 
                     // Optional: wait a bit for Flask app to boot
                     sh "sleep 5"
